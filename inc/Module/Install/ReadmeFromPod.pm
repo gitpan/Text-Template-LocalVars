@@ -52,6 +52,8 @@ sub readme_from {
     $out_file = $self->_readme_htm($in_file, $out_file, $options);
   } elsif ($format eq 'man') {
     $out_file = $self->_readme_man($in_file, $out_file, $options);
+  } elsif ($format eq 'md') {
+    $out_file = $self->_readme_md($in_file, $out_file, $options);
   } elsif ($format eq 'pdf') {
     $out_file = $self->_readme_pdf($in_file, $out_file, $options);
   }
@@ -124,6 +126,18 @@ sub _readme_pdf {
   return $out_file;
 }
 
+sub _readme_md {
+  my ($self, $in_file, $out_file, $options) = @_;
+  $out_file ||= 'README.md';
+  require Pod::Markdown;
+  my $parser = Pod::Markdown->new( @$options );
+  my $io = io->file($out_file)->open(">");
+  my $out_fh = $io->io_handle;
+  $parser->output_fh( *$out_fh );
+  $parser->parse_file( $in_file );
+  return $out_file;
+}
+
 
 sub _all_from {
   my $self = shift;
@@ -139,5 +153,5 @@ sub _all_from {
 
 __END__
 
-#line 259
+#line 279
 

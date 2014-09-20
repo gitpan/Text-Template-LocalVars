@@ -1,5 +1,10 @@
 Revision history for Text-Template-LocalVars
 
-0.01    Date/time
+0.02	2014-09-20T17:42:48-0400
+
+  [MISC]
+    * fix typo in module name in repo & RT URLs
+
+0.01    2014-09-20T17:15:00-0400
         First version, released on an unsuspecting world.
 

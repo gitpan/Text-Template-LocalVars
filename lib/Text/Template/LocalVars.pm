@@ -9,7 +9,7 @@ use Text::Template::LocalVars::Package;
 
 our @EXPORT_OK = qw(fill_in_file fill_in_string TTerror);
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 #################################################################
 
@@ -462,14 +462,14 @@ The following are available for export (the same as L<Text::Template>):
 =head1 BUGS
 
 Please report any bugs or feature requests to C<bug-text-template-local at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Text-Template-Local>.  I will be notified, and then you'll
+the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Text-Template-LocalVars>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
 
 =head1 SUPPORT
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc Text::Template::Local
+    perldoc Text::Template::LocalVars
 
 
 You can also look for information at:
@@ -478,11 +478,11 @@ You can also look for information at:
 
 =item * RT: CPAN's request tracker (report bugs here)
 
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Text-Template-Local>
+L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Text-Template-LocalVars>
 
 =item * Search CPAN
 
-L<http://search.cpan.org/dist/Text-Template-Local/>
+L<http://search.cpan.org/dist/Text-Template-LocalVars/>
 
 =back
 

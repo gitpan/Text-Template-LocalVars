@@ -6,8 +6,8 @@ use inc::Module::Install;
 name     'Text-Template-LocalVars';
 all_from 'lib/Text/Template/LocalVars.pm';
 
-readme_from 'lib/Text/Template/LocalVars.pm', { clean => 1, format => 'md' };
-readme_from 'lib/Text/Template/LocalVars.pm', { clean => 1 };
+readme_from 'lib/Text/Template/LocalVars.pm', { format => 'md' };
+readme_from 'lib/Text/Template/LocalVars.pm', { format => 'txt' };
 
 license  'gpl3';
 auto_license( holder => 'Smithsonian Astrophysical Observatory' );

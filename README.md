@@ -273,24 +273,24 @@ The following are available for export (the same as [Text::Template](https://met
 # BUGS
 
 Please report any bugs or feature requests to `bug-text-template-local at rt.cpan.org`, or through
-the web interface at [http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Text-Template-Local](http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Text-Template-Local).  I will be notified, and then you'll
+the web interface at [http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Text-Template-LocalVars](http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Text-Template-LocalVars).  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
 
 # SUPPORT
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc Text::Template::Local
+    perldoc Text::Template::LocalVars
 
 You can also look for information at:
 
 - RT: CPAN's request tracker (report bugs here)
 
-    [http://rt.cpan.org/NoAuth/Bugs.html?Dist=Text-Template-Local](http://rt.cpan.org/NoAuth/Bugs.html?Dist=Text-Template-Local)
+    [http://rt.cpan.org/NoAuth/Bugs.html?Dist=Text-Template-LocalVars](http://rt.cpan.org/NoAuth/Bugs.html?Dist=Text-Template-LocalVars)
 
 - Search CPAN
 
-    [http://search.cpan.org/dist/Text-Template-Local/](http://search.cpan.org/dist/Text-Template-Local/)
+    [http://search.cpan.org/dist/Text-Template-LocalVars/](http://search.cpan.org/dist/Text-Template-LocalVars/)
 
 # ACKNOWLEDGEMENTS
 
