@@ -9,14 +9,14 @@ use Text::Template::LocalVars::Package;
 
 our @EXPORT_OK = qw(fill_in_file fill_in_string TTerror);
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 #################################################################
 
-# These are used to pass the name of the template package to a nested
+# These are used to pass the name of the variable package to a nested
 # fill. The fragment code may run code compiled into *another* package,
 # and if that code wants to perform a localized fill using the
-# fragment's template package, it has no easy way of finding out.
+# fragment's variable package, it has no easy way of finding out.
 # This package variable is localized to the correct package name just
 # prior to calling SUPER::fill_in
 
@@ -229,61 +229,56 @@ alter it.
 Here's an example:
 
   use Text::Template::LocalVars 'fill_in_string';
-  Text::Template::LocalVars->always_prepend
-        ( q[use Text::Template::LocalVars 'fill_in_string';] );
+  Text::Template::LocalVars->always_prepend(
+      q[use Text::Template::LocalVars 'fill_in_string';] );
 
-  my $tpl = q[{
-	 fill_in_string(
-	     q[boo + foo = { $boo + $foo }],
-	     hash    => { boo => 2 },
-	 );}
-  foo = { $foo; }
-  boo = { $boo; }
-  ];
+  my $tpl = q[
+    { fill_in_string(
+		     q[boo + foo = { $boo + $foo }],
+		     hash    => { boo => 2 },
+		     package => __PACKAGE__,
+      );
+    }
+    foo = { $foo; }
+    boo = { $boo; }
+    ];
 
-  fill_in_string( $tpl, hash => { foo => 3 },
-                        package => 'Foo',
-                        output => \*STDOUT );
+  fill_in_string(
+      $tpl,
+      hash    => { foo => 3 },
+      package => 'Foo',
+      output  => \*STDOUT
+  );
 
-We're explicitly specifying a template variable package to
-ensure that we don't contaminate our environment.  This outputs
+We're explicitly specifying a variable package in the outer call to
+B<fill_in_string> to ensure that we don't contaminate our environment.
+(See L</"fill_in_string"> for details).  In the inner B<fill_in_string>
+call we use the current variable package so we can
+see the variables specified in the outer call.
+
+  This outputs
 
   boo + foo = 5
   foo = 3
   boo = 2
 
-Note that the inner fill sees C<$foo> from the top level fill, and
-adds C<$boo> to its own environment I<as well as that of the upper
-level fill>.
+The inner fill sees C<$foo> from the top level fill (as we've specified), and
+adds C<$boo> to package C<Foo>.
 
-What if you don't want to pollute the upper fill's environment?  You
-might try giving the inner fill it's own package,
+But, what if you don't want to pollute the upper fill's environment?
+You can't give the inner fill it's own package because it won't see
+the variables in B<Foo>.  You could extract the values from B<Foo> and
+explicitly pass them to the inner fill, but that is error prone.
 
-  my $tpl = q[{
-	 fill_in_string(
-	     q[boo + foo = { $boo + $foo }],
-	     hash    => { boo => 2 },
-	     package => 'Boo',
-	 );}
-  foo = { $foo; }
-  boo = { $boo; }
-  ];
-
-But then it has no access to the C<Foo> package, so you get this:
-
-  boo + foo = 2
-  foo = 3
-  boo =
-
-B<Text::Template::LocalVars> gives you the best of both worlds. If you
-pass the C<localize> option, the fill routine gets a copy of the
-parent fill's environment (or of the specified package), so it
-can't muck things up:
+With B<Text::Template::LocalVars>, if you pass the C<localize> option,
+the fill routine gets a I<copy> of the variable package, so it
+can't contaminate it
 
   my $tpl = q[{
 	 fill_in_string(
 	     q[boo + foo = { $boo + $foo }],
 	     hash    => { boo => 2 },
+             package => __PACKAGE__,
 	     localize => 1,
 	 );}
   foo = { $foo; }
@@ -296,42 +291,12 @@ results in
   foo = 3
   boo =
 
-
-Unlike Perl's C<local> command, which retains the identity of a variable,
-B<Text::Template::LocalVars> creates a new package and copies the contents
-of the original variable package into it (with some caveats, see below).
-
-For example, without localization, the package retains its name.  The
-following code
-
-  fill_in_string( qq[Package is { __PACKAGE__ }\n],
-		  package => 'Foo',
-		  output => \*STDOUT,
-		);
-
-outputs
-
-  Package is Foo
-
-while
-
-  fill_in_string( qq[Package is { __PACKAGE__ }\n],
-		  package => 'Foo',
-		  localize => 1,
-		  output => \*STDOUT,
-		);
-outputs
-
-  Package is Text::Template::LocalVars::Package::Q0
-
-Don't make assumptions about the name.
-
-Certain constructs in packages are not easily cloned, so the
-cloned package isn't identical to the original.  The C<HASH>, and
-C<ARRAY> values in the package are cloned using L<Storable::dclone>; the
+Certain constructs in packages are not easily copied, so the cloned
+package isn't identical to the original.  The C<HASH>, and C<ARRAY>
+values in the package are cloned using L<Storable::dclone>; the
 C<SCALAR> values are copied if they are not references, and the
-C<CODE> values are copied.  All other entries are ignored.  This
-is not a perfect sandbox.
+C<CODE> values are copied.  All other entries are ignored.  This is
+not a perfect sandbox.
 
 
 =head2 Tracking Variable Packages
@@ -384,7 +349,7 @@ Explicitly pass the I<data> to C<name()>:
 
 =item *
 
-Explicitly pass the I<template package> to C<name()>:
+Explicitly pass the I<variable package> to C<name()>:
 
   my $tpl = q[
 	name = { name( $reverse, __PACKAGE__ ) }
@@ -392,7 +357,7 @@ Explicitly pass the I<template package> to C<name()>:
 
 =item *
 
-Turn on template package tracking in C<name()>:
+Turn on variable package tracking in C<name()>:
 
   fill_in_string( $tpl, trackvarpkg => 1 );
 
@@ -444,6 +409,14 @@ this one.
 
 The API is the same as See L<Text::Template/"fill_this_in">, with the
 addition of the C<localize> and C<trackvarpkg> options (see L</"fill_in">).
+
+If the B<trackvarpkg> option is I<not> set, B<fill_in_string> retains
+B<Text::Template::fill_in_string> behavior in regards to default
+variable packages.  Unlike other fill routines,
+B<Text::Template::fill_in_string> will I<not> create an anonymous
+variable package if one is not specified, but will instead it use the
+current package. See
+L<https://rt.cpan.org/Public/Bug/Display.html?id=51473>.
 
 =head1 EXPORT
 
