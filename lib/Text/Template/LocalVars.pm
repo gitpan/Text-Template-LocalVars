@@ -9,7 +9,7 @@ use Text::Template::LocalVars::Package;
 
 our @EXPORT_OK = qw(fill_in_file fill_in_string TTerror);
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 #################################################################
 

@@ -6,14 +6,41 @@ use strict;
 use warnings;
 use base qw(Module::Install::Base);
 use vars qw($VERSION);
-use IO::All -binary;
-use Capture::Tiny 'capture';
 
-$VERSION = '0.22';
+$VERSION = '0.22-PATCHED';
+
+{
+
+    # these aren't defined until after _require_admin is run, so
+    # define them so prototypes are available during compilation.
+    sub io;
+    sub capture(&;@);
+
+#line 28
+
+    my $done = 0;
+
+    sub _require_admin {
+
+	# do this once to avoid redefinition warnings from IO::All
+	return if $done;
+
+	require IO::All;
+	IO::All->import( '-binary' );
+
+	require Capture::Tiny;
+	Capture::Tiny->import ( 'capture' );
+
+	return;
+    }
+
+}
 
 sub readme_from {
   my $self = shift;
   return unless $self->is_admin;
+
+  _require_admin;
 
   # Input file
   my $in_file  = shift || $self->_all_from
@@ -153,5 +180,5 @@ sub _all_from {
 
 __END__
 
-#line 279
+#line 316
 
